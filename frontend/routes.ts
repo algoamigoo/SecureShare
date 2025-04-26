@@ -16,4 +16,4 @@ export const apiAuthPrefix = "/api/auth";
  *  The defult redirect path after logging in
  *  @type { string }
  */
-export const DEFAULT_LOGIN_REDIRECT = "/upload";
+export const DEFAULT_LOGIN_REDIRECT = "/home";
