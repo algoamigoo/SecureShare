@@ -54,16 +54,17 @@ const emailFormSchema = z.object({
           file.type
         ),
       "Only images (jpg, jpeg, png) and PDF files are allowed"
-    ).refine(
-      (file) => file && file.size <= 4 * 1024 * 1024, // 4MB in bytes
-      { message: "File size must be less than or equal to 4MB" }
+    )
+    .refine(
+      (file) => file && file.size <= 1 * 1024 * 1024 * 10, // 10 MB in bytes
+      { message: "File size must be less than or equal to 10 MB" }
     ),
 });
 
 export const UploadNew = ({ token }: { token: string | null }) => {
-  const [emailSuggestions, setEmailSuggestions] = useState<
-    { email: string }[]
-  >([]);
+  const [emailSuggestions, setEmailSuggestions] = useState<{ email: string }[]>(
+    []
+  );
   const [isFetchingEmails, setIsFetchingEmails] = useState(false);
   const [isPanding, setIsPanding] = useState(false);
   const router = useRouter();
@@ -112,41 +113,47 @@ export const UploadNew = ({ token }: { token: string | null }) => {
     return () => clearTimeout(delayDebounceFn);
   }, [recipient_email]);
 
-  const handleFileUplaod = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      form.setValue("fileUpload", file);
+      const maxFileSize = 1 * 1024 * 1024 * 10; // 10 MB in bytes
+      if (file.size > maxFileSize) {
+        toast.error(
+          "File size exceeds 10 MB limit. Please upload a smaller file."
+        );
+        event.target.value = ""; // Clear the input
+        return;
+      }
+      form.setValue("fileUpload", file, { shouldValidate: true });
     }
   };
 
   const onSubmit = async (values: z.infer<typeof emailFormSchema>) => {
     setIsPanding(true);
-        const formData = new FormData();
+    const formData = new FormData();
 
-        formData.append('recipient_email', values.recipient_email);
-        formData.append('password', values.password);
-        formData.append('expiration_date', values.expiration_date.toISOString());
-        formData.append('fileUpload', values.fileUpload);
+    formData.append("recipient_email", values.recipient_email);
+    formData.append("password", values.password);
+    formData.append("expiration_date", values.expiration_date.toISOString());
+    formData.append("fileUpload", values.fileUpload);
 
-        const response = await fetch(`http://localhost:8000/api/file/upload`,
-            {
-                method: 'post',
-                body: formData,
-                headers: {
-                  Authorization: `Bearer ${token}`,
-                }
-            }
-        )
+    const response = await fetch(`http://localhost:8000/api/file/upload`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
 
-      const result = await response.json();
-      if(result.status == "success") {
-        toast.success(result.message);
-        router.push('/upload')
-      }else{
-        toast.error(result.message)
-      }
+    const result = await response.json();
+    if (result.status === "success") {
+      toast.success(result.message);
+      router.push("/upload");
+    } else {
+      toast.error(result.message);
+    }
     setIsPanding(false);
-  }
+  };
 
   return (
     <Card>
@@ -164,11 +171,11 @@ export const UploadNew = ({ token }: { token: string | null }) => {
                 <FormItem>
                   <FormLabel>Recipient Email</FormLabel>
                   <FormControl>
-                    <Select 
-                        onValueChange={(value) => {
-                            field.onChange(value);
-                        }}
-                        disabled={isPanding}
+                    <Select
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                      }}
+                      disabled={isPanding}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Type or select recipient's email" />
@@ -204,7 +211,11 @@ export const UploadNew = ({ token }: { token: string | null }) => {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input {...field} enablePasswordToggle  disabled={isPanding}/>
+                    <Input
+                      {...field}
+                      enablePasswordToggle
+                      disabled={isPanding}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -259,7 +270,7 @@ export const UploadNew = ({ token }: { token: string | null }) => {
                     <Input
                       type="file"
                       accept=".jpg,.jpeg,.png,.pdf"
-                      onChange={handleFileUplaod}
+                      onChange={handleFileUpload}
                       disabled={!isFormFilled || isPanding}
                     />
                   </FormControl>

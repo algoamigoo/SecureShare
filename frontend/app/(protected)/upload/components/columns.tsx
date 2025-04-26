@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table"
 
 export type UploadColumnsType = {
-    file_id: string;
     file_name: string;
     recipient_email: string;
     expiration_date: string;
@@ -11,10 +10,6 @@ export type UploadColumnsType = {
 };
 
 export const UploadColumns: ColumnDef<UploadColumnsType>[] = [
-    {
-        accessorKey: "file_id",
-        header: 'ID',
-    },
     {
         accessorKey: 'file_name',
         header: 'File Name',

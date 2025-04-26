@@ -4,7 +4,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import { CellAction } from "./CellAction";
 
 export type ReceiveColumnsType = {
-    file_id: string;
     file_name: string;
     recipient_email: string;
     expiration_date: string;
@@ -14,10 +13,6 @@ export type ReceiveColumnsType = {
 export function useReceiveColumns({ token }: { token: string | null}): ColumnDef<ReceiveColumnsType>[] {
   
     return [
-      {
-        accessorKey: "file_id",
-        header: 'ID',
-      },
       {
         accessorKey: 'file_name',
         header: 'File Name',

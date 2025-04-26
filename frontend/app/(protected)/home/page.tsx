@@ -75,7 +75,7 @@ export default function Home() {
         <p className="mt-4 text-lg text-muted-foreground">
           Join SecureShare today and experience the easiest way to share files safely.
         </p>
-        <Link href="/profile">
+        <Link href="/upload">
           <Button size="lg" className="mt-8 gap-2">
             <ShieldIcon className="h-5 w-5" />
             Get Started

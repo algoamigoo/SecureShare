@@ -27,14 +27,14 @@ export const Header = () => {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center justify-between">
         {/* Left Section - Logo */}
-        <Link href="/" className="flex items-center gap-2 font-semibold">
+        <Link href="/home" className="flex items-center gap-2 font-semibold">
           <ShieldIcon className="h-5 w-5 text-primary" />
           <span className="text-lg">SecureShare</span>
         </Link>
 
         {/* Center Section - Navigation */}
         <nav className="flex items-center gap-6">
-        <Link
+          <Link
             href="/home"
             className={cn(
               "flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary",
@@ -64,20 +64,10 @@ export const Header = () => {
             <DownloadIcon className="h-4 w-4" />
             Receive
           </Link>
-          <Link
-            href="/profile"
-            className={cn(
-              "flex items-center gap-1 text-sm font-medium transition-colors hover:text-primary",
-              pathName === "/profile" ? "text-primary" : "text-muted-foreground"
-            )}
-          >
-            <UserIcon className="h-4 w-4" />
-            Profile
-          </Link>
         </nav>
 
-        {/* Right Section - Theme Toggle and Logout */}
-        <div className="flex items-center gap-2">
+        {/* Right Section - Theme Toggle, Profile, and Logout */}
+        <div className="flex items-center gap-4">
           {mounted && (
             <Button
               variant="outline"
@@ -94,6 +84,20 @@ export const Header = () => {
               <span className="sr-only">Toggle theme</span>
             </Button>
           )}
+          <Link href="/profile">
+            <Button
+              variant="outline"
+              size="sm"
+              className={cn(
+                "rounded-full p-2",
+                pathName === "/profile" ? "text-primary border-primary" : "text-muted-foreground"
+              )}
+              aria-label="Profile"
+            >
+              <UserIcon className="h-4 w-4" />
+              <span className="sr-only">Profile</span>
+            </Button>
+          </Link>
           <LogoutButton>
             <Button variant="outline" size="sm" className="gap-1">
               <LogOutIcon className="h-4 w-4" />
